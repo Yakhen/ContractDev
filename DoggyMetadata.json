@@ -2,7 +2,7 @@
   "name": "Doggy",
   "symbol": "DOGG",
   "uri": "https://your-nft-uri.com",
-  "seller_fee_basis_points": 500,
+  "seller_fee_basis_points": 3000,
   "creators": [
     {
       "address": "CreatorWalletAddressHere",
