@@ -1,0 +1,30 @@
+{
+  "name": "Doggy",
+  "symbol": "DOGG",
+  "uri": "https://your-nft-uri.com",
+  "seller_fee_basis_points": 500,
+  "creators": [
+    {
+      "address": "CreatorWalletAddressHere",
+      "share": 100
+    }
+  ],
+  "properties": {
+    "category": "image",
+    "files": [
+      {
+        "uri": "https://your-image-uri.com/image.png",
+        "type": "image/png"
+      }
+    ],
+    "creators": [
+      {
+        "address": "CreatorWalletAddressHere",
+        "share": 100
+      }
+    ]
+  },
+  "twitter": "https://twitter.com/yourtwitterhandle",
+  "x": "https://x.com/yourxhandle",
+  "website": "https://yourwebsite.com"
+}
