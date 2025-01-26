@@ -13,7 +13,7 @@
     "category": "image",
     "files": [
       {
-        "uri": "https://your-image-uri.com/image.png",
+        "uri": "https://raw.githubusercontent.com/Yakhen/ContractDev/blob/main/Dan.png",
         "type": "image/png"
       }
     ],
