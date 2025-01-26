@@ -1,7 +1,7 @@
 {
   "name": "Doggy",
   "symbol": "DOGG",
-  "uri": "https://your-nft-uri.com",
+  "uri": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/DoggyMetadata.json",
   "seller_fee_basis_points": 3000,
   "creators": [
     {
