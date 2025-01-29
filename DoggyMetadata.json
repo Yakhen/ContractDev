@@ -1,29 +1,14 @@
 {
   "name": "Doggy",
   "symbol": "DOGG",
-  "uri": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/DoggyMetadata.json",
-  "seller_fee_basis_points": 3000,
-  "creators": [
+  "description": "Only Possible On Solana",
+  "image": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/LoveIt.png",
+  "attributes": [
     {
-      "address": "CreatorWalletAddressHere",
-      "share": 100
+      "trait_type": "Item",
+      "value": "Compressed Coil"
     }
   ],
-  "properties": {
-    "category": "image",
-    "files": [
-      {
-        "uri": "https://bafybeiecppfzpgx7xosf7h4a2zistip2d4lawqkwsp2dtp3ucmjpmnb6tq.ipfs.nftstorage.link/",
-        "type": "image/png"
-      }
-    ],
-    "creators": [
-      {
-        "address": "CreatorWalletAddressHere",
-        "share": 100
-      }
-    ]
-  },
   "twitter": "https://twitter.com/yourtwitterhandle",
   "x": "https://x.com/yourxhandle",
   "website": "https://solana.com/community"
