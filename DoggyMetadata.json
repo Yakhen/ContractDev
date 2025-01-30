@@ -2,7 +2,7 @@
   "name": "Doggy",
   "symbol": "DOGG",
   "description": "Only Possible On Solana",
-  "image": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/LoveIt.png",
+  "image": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/blub.png",
   "attributes": [
     {
       "trait_type": "Item",
