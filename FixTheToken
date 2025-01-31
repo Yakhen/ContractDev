@@ -1,0 +1,183 @@
+import {
+  Connection,
+  Keypair,
+  SystemProgram,
+  Transaction,
+  clusterApiUrl,
+  PublicKey,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
+import {
+  TOKEN_2022_PROGRAM_ID,
+  createAccount,
+  createInitializeMintInstruction,
+  mintTo,
+  transferCheckedWithFee,
+  getMintLen,
+} from "@solana/spl-token";
+
+// Connection to devnet cluster
+const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+
+// Playground wallet (you need to replace this with your wallet)
+const payer = pg.wallet.keypair;
+
+// Generate new keypair for Mint Account
+const mintKeypair = Keypair.generate();
+const mint = mintKeypair.publicKey;
+const decimals = 2;
+const mintAuthority = pg.wallet.publicKey;
+const transferFeeConfigAuthority = pg.wallet.keypair;
+const withdrawWithheldAuthority = pg.wallet.keypair;
+
+// Fee basis points and other constants
+const feeBasisPoints = 1000;
+const maxFee = BigInt(1000);
+const mintLen = getMintLen([]);
+const lamports = await connection.getMinimumBalanceForRentExemption(mintLen);
+
+// Instruction to invoke System Program to create new account for Mint
+const createAccountInstruction = SystemProgram.createAccount({
+  fromPubkey: payer.publicKey,
+  newAccountPubkey: mint,
+  space: mintLen, // Size for mint account
+  lamports,
+  programId: TOKEN_2022_PROGRAM_ID,
+});
+
+// Instruction to initialize the Mint
+const initializeMintInstruction = createInitializeMintInstruction(
+  mint,
+  decimals,
+  mintAuthority,
+  null,
+  TOKEN_2022_PROGRAM_ID
+);
+
+// Add instructions to new transaction
+const transaction = new Transaction().add(
+  createAccountInstruction,
+  initializeMintInstruction
+);
+
+// Send transaction to create Mint Account
+let transactionSignature = await sendAndConfirmTransaction(
+  connection,
+  transaction,
+  [payer, mintKeypair]
+);
+console.log(
+  "\nMint Account Created:",
+  `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+);
+
+// Create Token Account for the Playground wallet
+const sourceTokenAccount = await createAccount(
+  connection,
+  payer,
+  mint,
+  payer.publicKey,
+  undefined,
+  undefined,
+  TOKEN_2022_PROGRAM_ID
+);
+
+// Create a random Keypair for destination wallet
+const randomKeypair = new Keypair();
+const destinationTokenAccount = await createAccount(
+  connection,
+  payer,
+  mint,
+  randomKeypair.publicKey,
+  undefined,
+  undefined,
+  TOKEN_2022_PROGRAM_ID
+);
+
+// Mint tokens to source token account
+transactionSignature = await mintTo(
+  connection,
+  payer,
+  mint,
+  sourceTokenAccount,
+  mintAuthority,
+  1_000_000_00, // Amount
+  undefined,
+  undefined,
+  TOKEN_2022_PROGRAM_ID
+);
+console.log(
+  "\nMint Tokens:",
+  `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+);
+
+// Transfer tokens with fee
+const transferAmount = BigInt(1000_00); // 1000 tokens with decimals (e.g., 2 decimals)
+console.log(`\nTransfer Amount: ${transferAmount}`);
+
+// Calculate transfer fee
+const fee = (transferAmount * BigInt(feeBasisPoints)) / BigInt(10_000);
+const feeCharged = fee > maxFee ? maxFee : fee;
+
+console.log(`\nCalculated Transfer Fee: ${feeCharged}`);
+
+transactionSignature = await transferCheckedWithFee(
+  connection,
+  payer,
+  sourceTokenAccount,
+  mint,
+  destinationTokenAccount,
+  payer.publicKey,
+  transferAmount,
+  decimals,
+  feeCharged,
+  undefined,
+  undefined,
+  TOKEN_2022_PROGRAM_ID
+);
+console.log(
+  "\nTransfer Tokens:",
+  `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+);
+
+// Manually create metadata account
+const metadataAccount = Keypair.generate(); // Create new keypair for metadata account
+
+// Metadata data
+const metadataData = {
+  name: "Doggy",
+  symbol: "DOGG",
+  uri: "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/blub.png", // Image URL
+  twitter: "https://twitter.com/yourtwitterhandle",
+  x: "https://x.com/yourxhandle",
+  website: "https://solana.com/community",
+};
+
+// Define Metadata Account and create the account
+const createMetadataAccountInstruction = SystemProgram.createAccount({
+  fromPubkey: payer.publicKey,
+  newAccountPubkey: metadataAccount.publicKey,
+  space: 570, // Metadata account size (default size)
+  lamports: await connection.getMinimumBalanceForRentExemption(570),
+  programId: new PublicKey("metaqbxxUerdzQhqVJFB1XzV7bPcfzz2VqF2NwCptYg5t"), // Metaplex Metadata Program ID
+});
+
+// Create the metadata account
+const metadataTransaction = new Transaction().add(createMetadataAccountInstruction);
+let metadataTransactionSignature = await sendAndConfirmTransaction(
+  connection,
+  metadataTransaction,
+  [payer, metadataAccount]
+);
+
+console.log(
+  "\nMetadata Account Created:",
+  `https://solana.fm/tx/${metadataTransactionSignature}?cluster=devnet-solana`
+);
+
+// Here you would normally need to encode the metadata into the account
+// For now, we just display the metadata URL since we can't serialize metadata directly in Solana Playground
+console.log("\nMetadata URL:", metadataData.uri);
+
+// If you were to serialize the metadata manually, you would need to write it to the account here using an additional Metaplex instruction
+// Example: updateMetadataAccountInstruction(metadataAccount, metadataData);
