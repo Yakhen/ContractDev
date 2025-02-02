@@ -8,5 +8,5 @@
     ["twitter", "https://twitter.com/yourtwitterhandle"], // Add twitter handle
     ["x", "https://x.com/yourxhandle"],               // Add X handle
     ["website", "https://solana.com/community"],      // Add website URL
-  ], // Custom metadata
+  ]// Custom metadata
 }
