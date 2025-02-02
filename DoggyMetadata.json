@@ -5,8 +5,8 @@
   "image": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/blub.png",
   additionalMetadata: [
     ["description", "Only Possible On Solana"],
-    ["twitter", "https://twitter.com/yourtwitterhandle"], // Add twitter handle
-    ["x", "https://x.com/yourxhandle"],               // Add X handle
-    ["website", "https://solana.com/community"],      // Add website URL
+    ["twitter", "https://twitter.com/yourtwitterhandle"],
+    ["x", "https://x.com/yourxhandle"],              
+    ["website", "https://solana.com/community"],   
   ]// Custom metadata
 }
