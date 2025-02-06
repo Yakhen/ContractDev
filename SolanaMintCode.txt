@@ -66,10 +66,10 @@ const metaData: TokenMetadata = {
   uri: "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/DoggyMetadata.json",
   additionalMetadata: [
     ["description", "Only Possible On Solana"],
-    ["twitter", "https://twitter.com/yourtwitterhandle"], 
-    ["x", "https://x.com/yourxhandle"],              
-    ["website", "https://solana.com/community"], 
-  ], 
+    ["twitter", "https://twitter.com/yourtwitterhandle"],
+    ["x", "https://x.com/yourxhandle"],
+    ["website", "https://solana.com/community"],
+  ],
 };
 
 // Size of MetadataExtension 2 bytes for type, 2 bytes for length
@@ -266,6 +266,56 @@ transactionSignature = await sendAndConfirmTransaction(
 
 console.log(
   "\nFee Withdrawn to Fee Wallet:",
+  `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+);
+
+// Withdraw withheld tokens from Token Accounts
+async function withdrawWithheldTokensFromAccounts(
+  connection: Connection,
+  payer, // Transaction fee payer
+  mint, // Mint Account address
+  feeWalletTokenAccount, // Destination account for fee withdrawal
+  withdrawWithheldAuthority, // Authority for fee withdrawal
+  additionalSigners: Keypair[] | undefined, // Additional signers
+  accountsToWithdrawFrom, // Token Accounts to withdrawal from
+  confirmationOptions: any, // Confirmation options
+  programId// Token Extension Program ID
+): Promise<string> {
+  const transaction = new Transaction();
+  
+  // Add the withdrawal instructions for each account
+  accountsToWithdrawFrom.forEach((account) => {
+    const feeTransferInstruction = createTransferInstruction(
+      account, // Source account (from which the fee will be withdrawn)
+      feeWalletTokenAccount, // Fee wallet token account (destination)
+      withdrawWithheldAuthority, // Authority that will authorize the withdrawal
+      maxFee, // Max fee that can be withdrawn (adjust as needed)
+      [], // Signers (if any)
+      programId // Token program ID
+    );
+    
+    transaction.add(feeTransferInstruction);
+  });
+
+  // Send the transaction to withdraw the fee
+  return await sendAndConfirmTransaction(connection, transaction, [payer, ...additionalSigners || []], confirmationOptions);
+}
+
+// Example call to withdraw withheld tokens
+transactionSignature = await withdrawWithheldTokensFromAccounts(
+  connection,
+  payer, // Transaction fee payer
+  mint, // Mint Account address
+  feeWalletTokenAccount, // Destination account for fee withdrawal
+  payer.publicKey, // Authority for fee withdrawal
+  undefined, // Additional signers
+  [sourceTokenAccount], // Token Accounts to withdrawal from
+  undefined, // Confirmation options
+  TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+);
+
+console.log(
+  "\nWithdraw Fee From Token Accounts:",
   `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
 );
 
