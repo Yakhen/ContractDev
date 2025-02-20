@@ -1,0 +1,335 @@
+//The code can be deploy on VS Code
+
+import {
+    Connection,
+    Keypair,
+    SystemProgram,
+    Transaction,
+    clusterApiUrl,
+    sendAndConfirmTransaction,
+  } from "@solana/web3.js";
+  import {
+    ExtensionType,
+    TOKEN_2022_PROGRAM_ID,
+    createInitializeMintInstruction,
+    getMintLen,
+    createInitializeMetadataPointerInstruction,
+    getMint,
+    getMetadataPointerState,
+    getTokenMetadata,
+    mintTo,
+    TYPE_SIZE,
+    LENGTH_SIZE,
+    createAccount,
+    createAssociatedTokenAccountInstruction,
+    getAssociatedTokenAddress,
+    createTransferInstruction,
+  } from "@solana/spl-token";
+  import {
+    createInitializeInstruction,
+    createUpdateFieldInstruction,
+    pack,
+    TokenMetadata,
+  } from "@solana/spl-token-metadata";
+  import * as fs from 'fs';
+  
+  // Load the payer keypair from the file system
+  const payer = Keypair.fromSecretKey(
+    new Uint8Array(JSON.parse(fs.readFileSync('/home/jacky/.config/solana/id.json', 'utf-8')))
+    
+  );
+  
+  // Fee basis points for transfers (100 = 1%)
+  const feeBasisPoints = 500; // 5% fee
+  // Maximum fee for transfers in token base units
+  const maxFee = BigInt(3000); // Maximum fee of 3000 base units
+  
+  // Connection to devnet cluster
+  const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+  
+  // Transaction to send
+  let transaction: Transaction;
+  // Transaction signature returned from sent transaction
+  let transactionSignature: string;
+  
+  // Generate new keypair for Mint Account
+  const mintKeypair = Keypair.generate();
+  // Address for Mint Account
+  const mint = mintKeypair.publicKey;
+  // Decimals for Mint Account
+  const decimals = 2;
+  // Authority that can mint new tokens
+  const mintAuthority = payer.publicKey;
+  // Authority that can update token metadata
+  const updateAuthority = payer.publicKey;
+  
+  // Metadata to store in Mint Account
+  const metaData: TokenMetadata = {
+    updateAuthority: updateAuthority,
+    mint: mint,
+    name: "Fishi",
+    symbol: "FISH",
+    uri: "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/DoggyMetadata.json",
+    additionalMetadata: [
+      ["description", "Only Possible On Solana"],
+      ["twitter", "https://twitter.com/yourtwitterhandle"],
+      ["x", "https://x.com/yourxhandle"],
+      ["website", "https://solana.com/community"],
+    ],
+  };
+  
+  // Size of MetadataExtension 2 bytes for type, 2 bytes for length
+  const metadataExtension = TYPE_SIZE + LENGTH_SIZE;
+  // Size of metadata
+  const metadataLen = pack(metaData).length;
+  
+  // Size of Mint Account with extension
+  const mintLen = getMintLen([ExtensionType.MetadataPointer]);
+  
+  // Minimum lamports required for Mint Account
+  const lamports = await connection.getMinimumBalanceForRentExemption(
+    mintLen + metadataExtension + metadataLen
+  );
+  
+  // Instruction to invoke System Program to create new account
+  const createAccountInstruction = SystemProgram.createAccount({
+    fromPubkey: payer.publicKey, // Account that will transfer lamports to created account
+    newAccountPubkey: mint, // Address of the account to create
+    space: mintLen, // Amount of bytes to allocate to the created account
+    lamports, // Amount of lamports transferred to created account
+    programId: TOKEN_2022_PROGRAM_ID, // Program assigned as owner of created account
+  });
+  
+  // Instruction to initialize the MetadataPointer Extension
+  const initializeMetadataPointerInstruction =
+    createInitializeMetadataPointerInstruction(
+      mint, // Mint Account address
+      updateAuthority, // Authority that can set the metadata address
+      mint, // Account address that holds the metadata
+      TOKEN_2022_PROGRAM_ID
+    );
+  
+  // Instruction to initialize Mint Account data
+  const initializeMintInstruction = createInitializeMintInstruction(
+    mint, // Mint Account Address
+    decimals, // Decimals of Mint
+    mintAuthority, // Designated Mint Authority
+    null, // Optional Freeze Authority
+    TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+  );
+  
+  // Instruction to initialize Metadata Account data
+  const initializeMetadataInstruction = createInitializeInstruction({
+    programId: TOKEN_2022_PROGRAM_ID, // Token Extension Program as Metadata Program
+    metadata: mint, // Account address that holds the metadata
+    updateAuthority: updateAuthority, // Authority that can update the metadata
+    mint: mint, // Mint Account address
+    mintAuthority: mintAuthority, // Designated Mint Authority
+    name: metaData.name,
+    symbol: metaData.symbol,
+    uri: metaData.uri,
+  });
+  
+  // Instruction to update metadata, adding custom fields
+  const updateFieldInstruction = createUpdateFieldInstruction({
+    programId: TOKEN_2022_PROGRAM_ID, // Token Extension Program as Metadata Program
+    metadata: mint, // Account address that holds the metadata
+    updateAuthority: updateAuthority, // Authority that can update the metadata
+    field: metaData.additionalMetadata[0][0], // key
+    value: metaData.additionalMetadata[0][1], // value
+  });
+  
+  // Add instructions to new transaction
+  transaction = new Transaction().add(
+    createAccountInstruction,
+    initializeMetadataPointerInstruction,
+    initializeMintInstruction,
+    initializeMetadataInstruction,
+    updateFieldInstruction
+  );
+  
+  // Send transaction
+  transactionSignature = await sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [payer, mintKeypair] // Signers
+  );
+  
+  console.log(
+    "\nCreate Mint Account:",
+    `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+  );
+  
+  // Retrieve mint information
+  const mintInfo = await getMint(
+    connection,
+    mint,
+    "confirmed",
+    TOKEN_2022_PROGRAM_ID
+  );
+  
+  // Retrieve and log the metadata pointer state
+  const metadataPointer = getMetadataPointerState(mintInfo);
+  console.log("\nMetadata Pointer:", JSON.stringify(metadataPointer, null, 2));
+  
+  // Retrieve and log the metadata state
+  const metadata = await getTokenMetadata(
+    connection,
+    mint // Mint Account address
+  );
+  console.log("\nMetadata:", JSON.stringify(metadata, null, 2));
+  
+  // Now let's mint tokens to a source token account
+  
+  // Create Token Account for Playground wallet
+  const sourceTokenAccount = await createAccount(
+    connection,
+    payer, // Payer to create Token Account
+    mint, // Mint Account address
+    payer.publicKey, // Token Account owner
+    undefined, // Optional keypair, default to Associated Token Account
+    undefined, // Confirmation options
+    TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+  );
+  
+  // Minting 1 billion tokens (with 2 decimals = 100 base units per token)
+  const totalTokens = BigInt(1_000_000_000) * BigInt(100); // 1 billion tokens, 100 base units per token = 100 billion base units
+  
+  // Calculate transfer fee
+  const fee = (totalTokens * BigInt(feeBasisPoints)) / BigInt(10_000); // Calculate fee based on feeBasisPoints
+  
+  // Determine fee charged (if it exceeds the maxFee, the maxFee is charged instead)
+  const feeCharged = fee > maxFee ? maxFee : fee;
+  
+  // Log the transfer fee and the fee charged
+  console.log("Total Tokens:", totalTokens.toString());
+  console.log("Calculated Fee:", fee.toString());
+  console.log("Fee Charged:", feeCharged.toString());
+  
+  // Adjust the amount to mint after fee deduction
+  const amountToMint = totalTokens - feeCharged; // Deduct the fee to ensure exactly 1 billion tokens minted after fee
+  
+  // Mint tokens to the sourceTokenAccount after deducting the fee
+  transactionSignature = await mintTo(
+    connection,
+    payer, // Transaction fee payer
+    mint, // Mint Account address
+    sourceTokenAccount, // Mint to (destination account)
+    mintAuthority, // Mint Authority address
+    amountToMint, // Amount to mint after fee deduction
+    undefined, // Additional signers
+    undefined, // Confirmation options
+    TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+  );
+  
+  console.log(
+    "\nMint Tokens:",
+    `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+  );
+  
+  // Fee Wallet (your actual fee wallet)
+  const feeWallet = new Keypair().publicKey; // Using the fee wallet address you provided: D9QLd3QFwBqXfSZ1S2RyGoFzCathr65uQdsn9QAuo5Pb
+  
+  // Create the associated token account for the fee wallet (if it doesn't exist)
+  const feeWalletTokenAccount = await getAssociatedTokenAddress(
+    mint, // Token mint address
+    feeWallet, // Fee wallet address
+    false, // Do not allow the creation of associated accounts for an existing account
+    TOKEN_2022_PROGRAM_ID // The Token program ID
+  );
+  
+  // If the fee wallet's token account doesn't exist, create it
+  const feeWalletTokenAccountInstruction = createAssociatedTokenAccountInstruction(
+    payer.publicKey, // Payer
+    feeWalletTokenAccount, // The account that will receive the tokens
+    feeWallet, // The fee wallet
+    mint, // Token mint
+    TOKEN_2022_PROGRAM_ID // Token program ID
+  );
+  
+  // Create transfer instruction to withdraw fee from the source token account and send it to the fee wallet
+  const feeTransferInstruction = createTransferInstruction(
+    sourceTokenAccount, // Source account (from which the fee will be withdrawn)
+    feeWalletTokenAccount, // Fee wallet token account (destination)
+    payer.publicKey, // Owner of the source account
+    feeCharged, // Amount to transfer (the fee)
+    [], // Signers
+    TOKEN_2022_PROGRAM_ID // Token program ID
+  );
+  
+  // Add instructions to the transaction
+  transaction = new Transaction().add(
+    feeWalletTokenAccountInstruction, // Add the associated fee wallet token account creation instruction if needed
+    feeTransferInstruction // Add the fee withdrawal instruction
+  );
+  
+  // Send the transaction to withdraw the fee
+  transactionSignature = await sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [payer] // Payer signs the transaction
+  );
+  
+  console.log(
+    "\nFee Withdrawn to Fee Wallet:",
+    `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+  );
+  
+  // Withdraw withheld tokens from Token Accounts
+  async function withdrawWithheldTokensFromAccounts(
+    connection: Connection,
+    payer, // Transaction fee payer
+    mint, // Mint Account address
+    feeWalletTokenAccount, // Destination account for fee withdrawal
+    withdrawWithheldAuthority, // Authority for fee withdrawal
+    additionalSigners: Keypair[] | undefined, // Additional signers
+    accountsToWithdrawFrom, // Token Accounts to withdrawal from
+    confirmationOptions: any, // Confirmation options
+    programId // Token Extension Program ID
+  ): Promise<string> {
+    const transaction = new Transaction();
+    
+    // Add the withdrawal instructions for each account
+    accountsToWithdrawFrom.forEach((account) => {
+      const feeTransferInstruction = createTransferInstruction(
+        account, // Source account (from which the fee will be withdrawn)
+        feeWalletTokenAccount, // Fee wallet token account (destination)
+        withdrawWithheldAuthority, // Authority that will authorize the withdrawal
+        maxFee, // Max fee that can be withdrawn (adjust as needed)
+        [], // Signers (if any)
+        programId // Token program ID
+      );
+      
+      transaction.add(feeTransferInstruction);
+    });
+  
+    // Send the transaction to withdraw the fee
+    return await sendAndConfirmTransaction(connection, transaction, [payer, ...additionalSigners || []], confirmationOptions);
+  }
+  
+  // Example call to withdraw withheld tokens
+  transactionSignature = await withdrawWithheldTokensFromAccounts(
+    connection,
+    payer, // Transaction fee payer
+    mint, // Mint Account address
+    feeWalletTokenAccount, // Destination account for fee withdrawal
+    payer.publicKey, // Authority for fee withdrawal
+    undefined, // Additional signers
+    [sourceTokenAccount], // Token Accounts to withdrawal from
+    undefined, // Confirmation options
+    TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+  );
+  
+  console.log(
+    "\nWithdraw Fee From Token Accounts:",
+    `https://solana.fm/tx/${transactionSignature}?cluster=devnet-solana`
+  );
+  
+  console.log(
+    "\nMint Account:",
+    `https://solana.fm/address/${mint}?cluster=devnet-solana`
+  );
+    console.log(
+        "\nSource Token Account:",
+        `https://solana.fm/address/${sourceTokenAccount}?cluster=devnet-solana`
+    );  
