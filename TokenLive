@@ -11,3 +11,9 @@ ACTHzxeovVQ3YhFwUBVcD6gvtAxa4emqt54sXRQdEQpV photon
 spl-token authorize <TOKEN_MINT_ADDRESS> mint --disable
 spl-token authorize 4SvRySUoWyXMBw68Wgea8rgxh2hAncZaGUHMrR8gdMPL mint --disable
 spl-token authorize 4SvRySUoWyXMBw68Wgea8rgxh2hAncZaGUHMrR8gdMPL freeze --disable
+
+
+Token name: Bugs Bunny (BUGSB)
+address ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i
+spl-token authorize ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i mint --disable
+spl-token authorize ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i freeze --disable
