@@ -17,3 +17,5 @@ Token name: Bugs Bunny (BUGSB)
 address ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i
 spl-token authorize ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i mint --disable
 spl-token authorize ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i freeze --disable
+
+AMMID: DVAorvJwDbHUT39s5n73UkFKEQeQhxPxQgneqYwkqK2f
