@@ -17,5 +17,10 @@ Token name: Bugs Bunny (BUGSB)
 address ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i
 spl-token authorize ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i mint --disable
 spl-token authorize ARL8shrByNsrVomixyb85mxn7dwvgF4eDzNFmJt3c1i freeze --disable
-
+ 
 AMMID: DVAorvJwDbHUT39s5n73UkFKEQeQhxPxQgneqYwkqK2f
+
+Token name Gemma 3 (GEMM3)
+Token address AYaEYgrzZrbhoeoj5H9CV47zh4TdV6VCSQMGXuE2kERt
+
+spl-token authorize AYaEYgrzZrbhoeoj5H9CV47zh4TdV6VCSQMGXuE2kERt mint --disable
