@@ -1,8 +1,8 @@
 {
-  "name": "Bugs Bunny",
-  "symbol": "BUGSB",
+  "name": "Gemma 3",
+  "symbol": "GEMM3",
   "description": "Only Possible On Solana",
-  "image": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/blub.png",
+  "image": "https://raw.githubusercontent.com/Yakhen/ContractDev/refs/heads/main/Gemma3.png",
   "additionalMetadata": {
     "description": "Only Possible On Solana",
     "twitter": "https://twitter.com/yourtwitterhandle",
