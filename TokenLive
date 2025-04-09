@@ -24,3 +24,15 @@ Token name Gemma 3 (GEMM3)
 Token address AYaEYgrzZrbhoeoj5H9CV47zh4TdV6VCSQMGXuE2kERt
 
 spl-token authorize AYaEYgrzZrbhoeoj5H9CV47zh4TdV6VCSQMGXuE2kERt mint --disable
+
+B Move (BMOVE)
+GvwqjhHdgNeNf5PsM49s5MYfi34snvCM8ZpejeR8zSVu
+
+spl-token authorize GvwqjhHdgNeNf5PsM49s5MYfi34snvCM8ZpejeR8zSVu mint --disable
+
+spl-token thaw <TOKEN_ACCOUNT_ADDRESS> --owner <OWNER_PUBLIC_KEY>
+
+spl-token thaw GvwqjhHdgNeNf5PsM49s5MYfi34snvCM8ZpejeR8zSVu --owner jkqRMiBqvrM6VHgD77Y1yawwhaXH8Jf8txzJmFWCXTZ --keypair '/home/jacky/.config/solana/cli/config.yml'
+
+spl-token thaw <TOKEN_ACCOUNT_ADDRESS> --owner <OWNER_PUBLIC_KEY> --keypair /path/to/your/owner/keypair.json
+
