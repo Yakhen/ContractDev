@@ -36,3 +36,13 @@ spl-token thaw GvwqjhHdgNeNf5PsM49s5MYfi34snvCM8ZpejeR8zSVu --owner jkqRMiBqvrM6
 
 spl-token thaw <TOKEN_ACCOUNT_ADDRESS> --owner <OWNER_PUBLIC_KEY> --keypair /path/to/your/owner/keypair.json
 
+
+Spank (SPANK)
+spl-token mint HtfNRBaR4vdVubktuETeedLGGFA9QTFQ6qqw921eFYYj 1000000000
+
+spl-token supply HtfNRBaR4vdVubktuETeedLGGFA9QTFQ6qqw921eFYYj
+
+spl-token authorize HtfNRBaR4vdVubktuETeedLGGFA9QTFQ6qqw921eFYYj mint --disable
+
+AMMID:AAb9vMozLR3kg3e3rp5tgrhrGzezmuu8W32AMZfDp9Av
+DeML7DjP3ZcWXArDi8uAyGLffXt5Aw7oxYsCowtFQfhW
