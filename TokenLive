@@ -51,3 +51,8 @@ spl-token supply HTeE7YJHV5Lhk7AqzkTq6dAXfL2o2o9RaW6usL78y3Sm
 
 AMMID DStukUCdfebGLBmM2kfkL2fowzskK9BCFXkDhpDf98HZ
 
+
+"mint": "JCmoS4xTX9GV81PuwJf9aPfj7SnB6Rg69LEnruEvBKx8",
+spl-token supply JCmoS4xTX9GV81PuwJf9aPfj7SnB6Rg69LEnruEvBKx8
+spl-token authorize JCmoS4xTX9GV81PuwJf9aPfj7SnB6Rg69LEnruEvBKx8 mint --disable
+spl-token authorize JCmoS4xTX9GV81PuwJf9aPfj7SnB6Rg69LEnruEvBKx8 freeze --disable
