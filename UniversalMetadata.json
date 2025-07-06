@@ -1,12 +1,12 @@
 {
-  "name": "AIGOV",
-  "symbol": "AIGOV",
-  "description": "Only Possible On Solana",
+  "name": "Uran",
+  "symbol": "URA",
+  "description": "Let eat together",
   "image": "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/image.png",
   "additionalMetadata": {
     "description": "Only Possible On Solana",
-    "twitter": "https://https://x.com/ethrrr_rewards",
+    "twitter": "https://x.com/PumpSwapApi",
     "x": "https://https://x.com/ethrrr_rewards",               
-    "website": "https://ethereumprinter.com/"
+    "website": "https://pumpswapapi.fun"
   }
 }
