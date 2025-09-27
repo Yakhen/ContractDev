@@ -1,6 +1,6 @@
 {
-  "name": "MemeBB",
-  "symbol": "MemeBB",
+  "name": "lose",
+  "symbol": "LOSE",
   "description": "Let eat together",
   "image": "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/image.png",
   "additionalMetadata": {
