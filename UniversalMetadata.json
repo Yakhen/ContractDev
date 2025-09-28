@@ -1,6 +1,6 @@
 {
-  "name": "lose",
-  "symbol": "LOSE",
+  "name": "CodeLes",
+  "symbol": "CODELES",
   "description": "Let eat together",
   "image": "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/image.png",
   "seller_fee_basis_points": 0,
