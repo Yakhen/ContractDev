@@ -3,10 +3,41 @@
   "symbol": "LOSE",
   "description": "Let eat together",
   "image": "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/image.png",
+  "seller_fee_basis_points": 0,
+  "external_url": "https://pumpswapapi.fun",
+  "attributes": [
+    {
+      "trait_type": "Slogan",
+      "value": "Only Possible On Solana"
+    },
+    {
+      "trait_type": "Whale Address",
+      "value": "42brAgAVNzMBP7aaktPvAmBSPEkehnFQejiZc53EpJFd"
+    },
+    {
+      "trait_type": "Whale Address",
+      "value": "DNfuF1L62WWyW3pNakVkyGGFzVVhj4Yr52jSmdTyeBHm"
+    }
+  ],
+  "properties": {
+    "category": "token",
+    "creators": [
+      {
+        "address": "HUpPyLU8KWisCAr3mzWy2FKT6uuxQ2qGgJQxyTpDoes5",
+        "share": 100
+      }
+    ],
+    "files": [
+      {
+        "uri": "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/image.png",
+        "type": "image/png"
+      }
+    ]
+  },
   "additionalMetadata": {
     "description": "Only Possible On Solana",
     "twitter": "https://x.com/PumpSwapApi",
-    "x": "https://https://x.com/ethrrr_rewards",               
+    "x": "https://x.com/ethrrr_rewards",
     "website": "https://pumpswapapi.fun"
   }
 }
